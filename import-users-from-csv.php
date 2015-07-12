@@ -230,6 +230,11 @@ class IS_IU_Import_Users {
 
 		include( plugin_dir_path( __FILE__ ) . 'class-readcsv.php' );
 
+		// Some hacky magic to allow users starting on the first line
+		$file_data = '"first_name","last_name","user_email"' . "\n";
+		$file_data .= file_get_contents($filename);
+		file_put_contents($filename, $file_data);
+
 		// Loop through the file lines
 		$file_handle = @fopen( $filename, 'r' );
 		if($file_handle) {
@@ -239,16 +244,12 @@ class IS_IU_Import_Users {
 			$rkey = 0;
 			while ( ( $line = $csv_reader->get_row() ) !== NULL ) {
 
-				// If the first line is empty, abort
-				// If another line is empty, just skip it
+				// If line is empty, just skip it
 				if ( empty( $line ) ) {
-					if ( $first )
-						break;
-					else
 						continue;
 				}
 
-				// If we are on the first line, the columns are the headers
+				// We expect user even on the first line
 				if ( $first ) {
 					$headers = $line;
 					$first = false;
