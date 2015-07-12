@@ -298,6 +298,18 @@ class IS_IU_Import_Users {
 					$update = true;
 				}
 
+				// Generate username from First and Last names, count on with UTF-8 chars
+				$convert_table = Array(  'ä'=>'a',  'Ä'=>'A',  'á'=>'a',  'Á'=>'A',  'à'=>'a',  'À'=>'A',  'ã'=>'a',  'Ã'=>'A',  'â'=>'a',  'Â'=>'A',  'č'=>'c',  'Č'=>'C',  'ć'=>'c',  'Ć'=>'C',  'ď'=>'d',  'Ď'=>'D',  'ě'=>'e',  'Ě'=>'E',  'é'=>'e',  'É'=>'E',  'ë'=>'e',  'Ë'=>'E',  'è'=>'e',  'È'=>'E',  'ê'=>'e',  'Ê'=>'E',  'í'=>'i',  'Í'=>'I',  'ï'=>'i',  'Ï'=>'I',  'ì'=>'i',  'Ì'=>'I',  'î'=>'i',  'Î'=>'I',  'ľ'=>'l',  'Ľ'=>'L',  'ĺ'=>'l',  'Ĺ'=>'L',  'ń'=>'n',  'Ń'=>'N',  'ň'=>'n',  'Ň'=>'N',  'ñ'=>'n',  'Ñ'=>'N',  'ó'=>'o',  'Ó'=>'O',  'ö'=>'o',  'Ö'=>'O',  'ô'=>'o',  'Ô'=>'O',  'ò'=>'o',  'Ò'=>'O',  'õ'=>'o',  'Õ'=>'O',  'ő'=>'o',  'Ő'=>'O',  'ř'=>'r',  'Ř'=>'R',  'ŕ'=>'r',  'Ŕ'=>'R',  'š'=>'s',  'Š'=>'S',  'ś'=>'s',  'Ś'=>'S',  'ť'=>'t',  'Ť'=>'T',  'ú'=>'u',  'Ú'=>'U',  'ů'=>'u',  'Ů'=>'U',  'ü'=>'u',  'Ü'=>'U',  'ù'=>'u',  'Ù'=>'U',  'ũ'=>'u',  'Ũ'=>'U',  'û'=>'u',  'Û'=>'U',  'ý'=>'y',  'Ý'=>'Y',  'ž'=>'z',  'Ž'=>'Z',  'ź'=>'z',  'Ź'=>'Z');
+				$last_name_clean = strtr($userdata['last_name'], $convert_table);
+				$first_name_clean = strtr($userdata['first_name'], $convert_table);
+				$last_name_clean = strtolower($last_name_clean);
+				$first_name_clean = strtolower($first_name_clean);
+				$userdata['user_login'] = $last_name_clean . "." . $first_name_clean;
+
+				// We hold username is in last_name.first_name format, so purge separate last and first from array
+				$userdata['last_name'] = NULL;
+				$userdata['first_name'] = NULL;
+
 				// If creating a new user and no password was set, let auto-generate one!
 				if ( ! $update && empty( $userdata['user_pass'] ) )
 					$userdata['user_pass'] = wp_generate_password( 12, false );
