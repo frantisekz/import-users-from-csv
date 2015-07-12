@@ -306,6 +306,14 @@ class IS_IU_Import_Users {
 				$first_name_clean = strtolower($first_name_clean);
 				$userdata['user_login'] = $last_name_clean . "." . $first_name_clean;
 
+				// Make sure we'll never have same user names
+				$i = 0;
+				while(username_exists($userdata['user_login']) != NULL)
+				{
+					$i++;
+					$userdata['user_login'] = $userdata['user_login'] . $i;
+				}
+
 				// We hold username is in last_name.first_name format, so purge separate last and first from array
 				$userdata['last_name'] = NULL;
 				$userdata['first_name'] = NULL;
